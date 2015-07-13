@@ -2,6 +2,7 @@ var gl;
 var points;
 
 var
+  IS_FULL_TRIANGLE = true,
   MAX_SUBDIVISION = 10,
   pointArray = [],
   subdivisionLevel = 0,
@@ -22,6 +23,11 @@ var
     vec2(FACTOR, -FACTOR)
   ];
 
+/**
+ * r
+ * p = x2 + y2 + q
+ */
+
 window.onload = function () {
 
   // bind UI
@@ -39,6 +45,13 @@ window.onload = function () {
   var angleBtn = document.getElementById('thetaAngle');
   angleBtn.addEventListener('input', function (evt) {
     angle = parseInt(this.value, 10) * (Math.PI / 180);
+    render();
+  });
+
+  var showAsSierpinski = document.getElementById('showAsSierpinski');
+  showAsSierpinski.addEventListener('change', function (evt) {
+    IS_FULL_TRIANGLE = !this.checked;
+    console.log(this.checked);
     render();
   });
 
@@ -133,6 +146,8 @@ function divideTriangle(a, b, c, count) {
     divideTriangle(a, midAB, midCA, count);
     divideTriangle(c, midCA, midBC, count);
     divideTriangle(b, midBC, midAB, count);
-    divideTriangle(midAB, midBC, midCA, count);
+    if (IS_FULL_TRIANGLE) {
+      divideTriangle(midAB, midBC, midCA, count);
+    }
   }
 }
