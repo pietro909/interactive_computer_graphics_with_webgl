@@ -29,20 +29,23 @@ window.onload = function () {
   subdBtn.addEventListener('input', function (evt) {
     subdivisionLevel = parseInt(this.value, 10);
     if (subdivisionLevel > (MAX_SUBDIVISION - 3)) {
-      console.log('oob: ' + subdivisionLevel)
+      console.warn('out of bound: ' + subdivisionLevel);
       this.value = 0;
       subdivisionLevel = 0;
     }
-    //console.log('subdivisionLevel: ' + subdivisionLevel);
     render();
   });
 
   var angleBtn = document.getElementById('thetaAngle');
   angleBtn.addEventListener('input', function (evt) {
     angle = parseInt(this.value, 10) * (Math.PI / 180);
-    //console.log('angle: ' + angle);
     render();
   });
+
+  infos.rotation = document.getElementById('infoRotation');
+  infos.subds = document.getElementById('infoSubdivisions');
+  infos.triangles = document.getElementById('infoTriangles');
+  infos.vertices = document.getElementById('infoVertices');
 
 
   // init
@@ -53,11 +56,6 @@ window.onload = function () {
     alert('WebGL is not available');
     return;
   }
-
-  infos.rotation = document.getElementById('infoRotation');
-  infos.subds = document.getElementById('infoSubdivisions');
-  infos.triangles = document.getElementById('infoTriangles');
-  infos.vertices = document.getElementById('infoVertices');
 
   // configure webgl
   gl.viewport(0, 0, canvas.width, canvas.height);
@@ -111,11 +109,6 @@ function rotatePoint(vector, _angle) {
     a = vector[0], b = vector[1],
     distance = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)),
     angle = _angle * distance,
-  /*
-   x′=xcosθ−ysinθ
-
-   y′=xsinθ+ycosθ
-   */
     a1 = a * Math.cos(angle) - b * Math.sin(angle),
     b1 = a * Math.sin(angle) + b * Math.cos(angle);
   return (vec2(a1, b1));
