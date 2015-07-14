@@ -11,6 +11,7 @@
         {
             gl_Position = vPosition;
         }
+
     </script>
 
     <script id="fragment-shader" type="x-shader/x-fragment">
@@ -19,6 +20,7 @@
         {
             gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
         }
+
     </script>
 
     <script type="text/javascript" src="../Common/webgl-utils.js"></script>
@@ -63,12 +65,18 @@
             </fieldset>
             <fieldset>
                 <legend>Controls</legend>
-                <label for="showAsSierpinski">Show as Sierpinski Gasket</label>
-                <input id="showAsSierpinski" type="checkbox">
-                <label for="subdivisionLevel">Subdivisions (0 to 7)</label>
-                <input id="subdivisionLevel" type="range" min=0 max=7 value=0>
-                <label for="thetaAngle">Rotation angle (0° to 360°)</label>
-                <input id="thetaAngle" type="range" min=0 max=360 value=0>
+                <div>
+                    <label for="showAsSierpinski">Show as Sierpinski Gasket</label>
+                    <input id="showAsSierpinski" type="checkbox">
+                </div>
+                <div>
+                    <label for="subdivisionLevel">Subdivisions (0 to 7)</label>
+                    <input id="subdivisionLevel" type="range" min=0 max=7 value=0>
+                </div>
+                <div>
+                    <label for="thetaAngle">Rotation angle (0° to 360°)</label>
+                    <input id="thetaAngle" type="range" min=0 max=360 value=0>
+                </div>
             </fieldset>
         </form>
     </aside>
