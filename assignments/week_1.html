@@ -12,6 +12,7 @@
             gl_Position = vPosition;
         }
 
+
     </script>
 
     <script id="fragment-shader" type="x-shader/x-fragment">
@@ -20,6 +21,7 @@
         {
             gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
         }
+
 
     </script>
 
@@ -65,6 +67,14 @@
             </fieldset>
             <fieldset>
                 <legend>Controls</legend>
+                <div>
+                    <label for="renderType">Show as:</label>
+                    <select id="renderType">
+                        <option value="POINTS">CLOUD</option>
+                        <option value="WIREFRAME">WIREFRAME</option>
+                        <option value="TRIANGLES" selected>GEOMETRY</option>
+                    </select>
+                </div>
                 <div>
                     <label for="showAsSierpinski">Show as Sierpinski Gasket</label>
                     <input id="showAsSierpinski" type="checkbox">

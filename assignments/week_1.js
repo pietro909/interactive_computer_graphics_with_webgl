@@ -1,7 +1,6 @@
-var gl;
-var points;
-
 var
+  gl,
+  STYLE = '',
   IS_FULL_TRIANGLE = true,
   MAX_SUBDIVISION = 10,
   pointArray = [],
@@ -51,7 +50,12 @@ window.onload = function () {
   var showAsSierpinski = document.getElementById('showAsSierpinski');
   showAsSierpinski.addEventListener('change', function (evt) {
     IS_FULL_TRIANGLE = !this.checked;
-    console.log(this.checked);
+    render();
+  });
+
+  var renderType = document.getElementById('renderType');
+  renderType.addEventListener('input', function (evt) {
+    STYLE = this.value;
     render();
   });
 
@@ -94,11 +98,11 @@ window.onload = function () {
 };
 
 function render() {
+  var point;
+
   pointArray = [];
   divideTriangle(vertices[0], vertices[1], vertices[2], subdivisionLevel);
 
-  var point;
-  console.log('draw ' + subdivisionLevel);
   for (var i = 0; i < pointArray.length; i += 1) {
     point = pointArray[i];
     pointArray[i] = rotatePoint(point, angle);
@@ -106,7 +110,20 @@ function render() {
 
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(pointArray));
   gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.drawArrays(gl.TRIANGLES, 0, pointArray.length);
+
+  switch (STYLE) {
+    case 'POINTS':
+      gl.drawArrays(gl.POINTS, 0, pointArray.length);
+      break;
+    case 'WIREFRAME':
+      for (var k = 0; k < pointArray.length; k += 3) {
+        gl.drawArrays(gl.LINE_LOOP, k, 3);
+      }
+      break;
+    default :
+      gl.drawArrays(gl.TRIANGLES, 0, pointArray.length);
+      break;
+  }
 
   infos.rotation.value = Math.floor(angle / (Math.PI / 180));
   infos.subds.value = subdivisionLevel;
