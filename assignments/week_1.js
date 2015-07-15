@@ -14,17 +14,40 @@ var
     vertices : 3
   },
 // initial polygon (triangle)
+  vertices = [/*
+   vec2(-FACTOR, -FACTOR),
+   vec2(0, FACTOR),
+   //vec2(-FACTOR, FACTOR),
+   //vec2(-FACTOR, FACTOR),
+   vec2(FACTOR, -FACTOR)
+   */];
+
+function makePolygon(radius, side) {
+  var
+    _lastPoint,
+    lastPoint = vec2(0, radius),
+    rotationDeg = 360 / side,
+    rotation = rotationDeg * (Math.PI / 180);
+
   vertices = [
-    vec2(-FACTOR, -FACTOR),
-    vec2(0, FACTOR),
-    //vec2(-FACTOR, FACTOR),
-    //vec2(-FACTOR, FACTOR),
-    vec2(FACTOR, -FACTOR)
+    vec2(0,0)
   ];
 
+  console.log('angle -> ' + rotationDeg);
+
+  //vertices.push(firstPoint);
+
+  for (var s = 1; s <= side; s += 1) {
+    _lastPoint = rotatePoint(lastPoint, rotation);
+    vertices.push(_lastPoint);
+    lastPoint = _lastPoint;
+  }
+}
+
+makePolygon(1, 3);
+
 /**
- * r
- * p = x2 + y2 + q
+ * r2 = x2 + y2
  */
 
 window.onload = function () {
@@ -56,6 +79,12 @@ window.onload = function () {
   var renderType = document.getElementById('renderType');
   renderType.addEventListener('input', function (evt) {
     STYLE = this.value;
+    render();
+  });
+
+  var geometryControls = document.getElementById('sides');
+  geometryControls.addEventListener('input', function (evt) {
+    makePolygon(1, parseInt(this.value, 10));
     render();
   });
 
@@ -102,6 +131,9 @@ function render() {
 
   pointArray = [];
   divideTriangle(vertices[0], vertices[1], vertices[2], subdivisionLevel);
+  for (var v = 3; v < vertices.length; v += 1) {
+    divideTriangle(vertices[v - 2], vertices[v - 1], vertices[v], subdivisionLevel);
+  }
 
   for (var i = 0; i < pointArray.length; i += 1) {
     point = pointArray[i];
@@ -121,7 +153,7 @@ function render() {
       }
       break;
     default :
-      gl.drawArrays(gl.TRIANGLES, 0, pointArray.length);
+      gl.drawArrays(gl.TRIANGLE_FAN, 0, pointArray.length);
       break;
   }
 
@@ -130,7 +162,7 @@ function render() {
   infos.triangles.value = pointArray.length / 3;
   infos.vertices.value = pointArray.length;
 
-  pointArray = [];
+  //pointArray = [];
 
 }
 
@@ -152,7 +184,11 @@ function divideTriangle(a, b, c, count) {
     return;
   }
   if (count === 0) {
-    pointArray.push(a, b, c);
+    if (a !== undefined && b !== undefined && c !== undefined) {
+      pointArray.push(a, b, c);
+    } else {
+      console.error('undefined point ', a, b, c);
+    }
   } else {
     count -= 1;
     // divide triangle
