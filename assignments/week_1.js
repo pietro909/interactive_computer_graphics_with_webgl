@@ -1,12 +1,12 @@
 var
   gl,
   STYLE = '',
+  SIDES = 3, RADIUS = 1,
   IS_FULL_TRIANGLE = true,
   MAX_SUBDIVISION = 10,
   pointArray = [],
   subdivisionLevel = 0,
   angle = 0,
-  FACTOR = 0.5,
   infos = {
     subds    : 0,
     rotation : 0,
@@ -14,41 +14,36 @@ var
     vertices : 3
   },
 // initial polygon (triangle)
-  vertices = [/*
-   vec2(-FACTOR, -FACTOR),
-   vec2(0, FACTOR),
-   //vec2(-FACTOR, FACTOR),
-   //vec2(-FACTOR, FACTOR),
-   vec2(FACTOR, -FACTOR)
-   */];
+  vertices = [];
 
 function makePolygon(radius, side) {
   var
-    _lastPoint,
+    s, tri, _lastPoint,
     lastPoint = vec2(0, radius),
     rotationDeg = 360 / side,
-    rotation = rotationDeg * (Math.PI / 180);
+    rotation = rotationDeg * (Math.PI / 180),
+    center = vec2(0, 0);
 
-  vertices = [
-    vec2(0,0)
-  ];
+  vertices = [];
 
-  console.log('angle -> ' + rotationDeg);
-
-  //vertices.push(firstPoint);
-
-  for (var s = 1; s <= side; s += 1) {
-    _lastPoint = rotatePoint(lastPoint, rotation);
-    vertices.push(_lastPoint);
-    lastPoint = _lastPoint;
+  if (side > 3) {
+    for (s = 0; s < side; s += 1) {
+      vertices.push(center);
+      tri = 2;
+      while (tri--) {
+        _lastPoint = rotatePoint(lastPoint, rotation, false);
+        vertices.push(_lastPoint);
+        lastPoint = _lastPoint;
+      }
+    }
+  } else {
+    for (s = 0; s < side; s += 1) {
+      _lastPoint = rotatePoint(lastPoint, rotation, false);
+      vertices.push(_lastPoint);
+      lastPoint = _lastPoint;
+    }
   }
 }
-
-makePolygon(1, 3);
-
-/**
- * r2 = x2 + y2
- */
 
 window.onload = function () {
 
@@ -84,8 +79,27 @@ window.onload = function () {
 
   var geometryControls = document.getElementById('sides');
   geometryControls.addEventListener('input', function (evt) {
-    makePolygon(1, parseInt(this.value, 10));
-    render();
+    var sides = parseInt(this.value, 10);
+    if (sides > 2 && sides < 11) {
+      SIDES = sides;
+      makePolygon(RADIUS, SIDES);
+      render();
+    } else {
+      this.value = 3;
+    }
+  });
+
+  var sizeControls = document.getElementById('radius');
+  sizeControls.addEventListener('input', function (evt) {
+    var radius = parseFloat(this.value, 10);
+    console.log('radius '+radius);
+    if (radius > 0 && radius <= 1) {
+      RADIUS = radius;
+      makePolygon(RADIUS, SIDES);
+      render();
+    } else {
+      this.value = 1;
+    }
   });
 
   infos.rotation = document.getElementById('infoRotation');
@@ -122,6 +136,8 @@ window.onload = function () {
   gl.enableVertexAttribArray(vPosition);
   gl.bufferData(gl.ARRAY_BUFFER, 8 * Math.pow(3, MAX_SUBDIVISION + 1), gl.STATIC_DRAW);
 
+  makePolygon(RADIUS, SIDES);
+
   render();
 
 };
@@ -137,7 +153,7 @@ function render() {
 
   for (var i = 0; i < pointArray.length; i += 1) {
     point = pointArray[i];
-    pointArray[i] = rotatePoint(point, angle);
+    pointArray[i] = rotatePoint(point, angle, true);
   }
 
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(pointArray));
@@ -153,7 +169,7 @@ function render() {
       }
       break;
     default :
-      gl.drawArrays(gl.TRIANGLE_FAN, 0, pointArray.length);
+      gl.drawArrays(gl.TRIANGLES, 0, pointArray.length);
       break;
   }
 
@@ -166,13 +182,16 @@ function render() {
 
 }
 
-function rotatePoint(vector, _angle) {
+function rotatePoint(vector, _angle, twist) {
   var
     a = vector[0], b = vector[1],
-    distance = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)),
+    TWIST = twist ? true : false,
+    distance = TWIST ? Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)) :  1,
     angle = _angle * distance,
     a1 = a * Math.cos(angle) - b * Math.sin(angle),
     b1 = a * Math.sin(angle) + b * Math.cos(angle);
+
+  console.log('distance is '+distance);
   return (vec2(a1, b1));
 }
 
