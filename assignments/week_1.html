@@ -14,6 +14,8 @@
 
 
 
+
+
     </script>
 
     <script id="fragment-shader" type="x-shader/x-fragment">
@@ -22,6 +24,8 @@
         {
             gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
         }
+
+
 
 
 
@@ -35,36 +39,37 @@
 <body>
 <header>
     <ul class="breadcrumb">
+        <li><a href="http://pietrograndi.eu">Pietro Grandi</a></li>
         <li><a href="https://www.coursera.org/course/webgl">Interactive Computer Graphics with WebGL</a></li>
-        <li>Assignments</li>
+        <li>Assignment 1</li>
         <li>Twist and Tessellation</li>
     </ul>
 </header>
-<article>
-    <section class="col-md-8">
+<article class="col-16">
+    <section class="col-md-8 media">
         <canvas id="gl-canvas" width="512" height="512">
             Oops... your browser doesn't support the HTML5 canvas element
         </canvas>
     </section>
-    <aside class="col-md-4">
-        <form>
+    <aside>
+        <form class="col-md-4 panel panel-info">
             <fieldset>
                 <legend>Info</legend>
                 <div>
-                    <label for="infoSubdivisions">Tessellation:</label>
-                    <input id="infoSubdivisions" disabled value=0>
+                    <label class="col-sm-6 col-md-6" for="infoSubdivisions">Tessellation:</label>
+                    <input class="col-sm-6 col-md-6" id="infoSubdivisions" disabled value=0>
                 </div>
                 <div>
-                    <label for="infoRotation">Twist:</label>
-                    <input id="infoRotation" disabled value=0>
+                    <label class="col-sm-6 col-md-6" for="infoRotation">Twist:</label>
+                    <input class="col-sm-6 col-md-6" id="infoRotation" disabled value=0>
                 </div>
                 <div>
-                    <label for="infoTriangles">Triangles:</label>
-                    <input id="infoTriangles" disabled value=1>
+                    <label class="col-sm-6 col-md-6" for="infoTriangles">Triangles:</label>
+                    <input class="col-sm-6 col-md-6" id="infoTriangles" disabled value=1>
                 </div>
                 <div>
-                    <label for="infoVertices">Vertices:</label>
-                    <input id="infoVertices" disabled value=3>
+                    <label class="col-sm-6 col-md-6" for="infoVertices">Vertices:</label>
+                    <input class="col-sm-6 col-md-6" id="infoVertices" disabled value=3>
                 </div>
             </fieldset>
             <fieldset>

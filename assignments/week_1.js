@@ -27,7 +27,7 @@ function makePolygon(radius, side) {
   vertices = [];
 
   if (side > 3) {
-    for (s = 0; s < side; s += 1) {
+    for (s = 0; s < side-1; s += 1) {
       vertices.push(center);
       tri = 2;
       while (tri--) {
@@ -36,6 +36,7 @@ function makePolygon(radius, side) {
         lastPoint = _lastPoint;
       }
     }
+    //vertices.push(center);
   } else {
     for (s = 0; s < side; s += 1) {
       _lastPoint = rotatePoint(lastPoint, rotation, false);
@@ -191,7 +192,6 @@ function rotatePoint(vector, _angle, twist) {
     a1 = a * Math.cos(angle) - b * Math.sin(angle),
     b1 = a * Math.sin(angle) + b * Math.cos(angle);
 
-  console.log('distance is '+distance);
   return (vec2(a1, b1));
 }
 
