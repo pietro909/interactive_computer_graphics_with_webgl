@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <title>Painting with the Mouse</title>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        void main()
+        {
+            gl_Position = vPosition;
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        void main()
+        {
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+    </script>
+
+    <script type="text/javascript" src="../Common/webgl-utils.js"></script>
+    <script type="text/javascript" src="../Common/initShaders.js"></script>
+    <script type="text/javascript" src="../Common/MV.js"></script>
+    <script type="text/javascript" src="assignment_2.js"></script>
+</head>
+<body>
+<header>
+    <ul class="breadcrumb">
+        <li><a href="http://pietrograndi.eu">Pietro Grandi</a></li>
+        <li><a href="https://www.coursera.org/course/webgl">Interactive Computer Graphics with WebGL</a></li>
+        <li>Assignment 2</li>
+        <li>Painting with the Mouse</li>
+    </ul>
+</header>
+<article class="col-16">
+    <section class="col-md-8 media">
+        <canvas id="gl-canvas" width="512" height="512">
+            Oops... your browser doesn't support the HTML5 canvas element
+        </canvas>
+    </section>
+    <aside>
+        <form class="col-md-4 panel panel-info">
+            <fieldset>
+                <legend>Info</legend>
+                <div>
+                    <label class="col-sm-6 col-md-6" for="infoVertices">Vertices:</label>
+                    <input class="col-sm-6 col-md-6" id="infoVertices" disabled value=3>
+                </div>
+                <div>
+                    <label class="col-sm-6 col-md-6" for="normalizedPosition">normalized coordinates</label>
+                    <input class="col-sm-6 col-md-6" id="normalizedPosition" disabled value=''>
+                </div>
+                <div>
+                    <label class="col-sm-6 col-md-6" for="layerPosition">canvas coordinates</label>
+                    <input class="col-sm-6 col-md-6" id="layerPosition" disabled value=''>
+                </div>
+                <div>
+                    <label class="col-sm-6 col-md-6" for="isMouseDown">mouse status</label>
+                    <input class="col-sm-6 col-md-6" id="isMouseDown" disabled value=''>
+                </div>
+            </fieldset>
+        </form>
+    </aside>
+</article>
+</body>
+</html>
