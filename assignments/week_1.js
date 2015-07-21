@@ -72,7 +72,7 @@ window.onload = function () {
   });
 
   var renderType = document.getElementById('renderType');
-  renderType.addEventListener('input', function (evt) {
+  renderType.addEventListener('change', function (evt) {
     STYLE = this.value;
     render();
   });
