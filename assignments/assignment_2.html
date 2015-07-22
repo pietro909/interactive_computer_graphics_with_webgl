@@ -7,17 +7,24 @@
 
     <script id="vertex-shader" type="x-shader/x-vertex">
         attribute vec4 vPosition;
+        attribute vec4 vColor;
+
+        varying vec4 fColor;
+
         void main()
         {
             gl_Position = vPosition;
+            fColor = vColor;
         }
     </script>
 
     <script id="fragment-shader" type="x-shader/x-fragment">
         precision mediump float;
+        varying vec4 fColor;
+
         void main()
         {
-            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            gl_FragColor = fColor;
         }
     </script>
 
@@ -36,7 +43,7 @@
     </ul>
 </header>
 <article class="col-16">
-    <section class="col-md-8 media">
+    <section class="col-md-8 media" id="theContainer">
         <canvas id="gl-canvas" width="512" height="512">
             Oops... your browser doesn't support the HTML5 canvas element
         </canvas>
@@ -47,7 +54,7 @@
                 <legend>Info</legend>
                 <div>
                     <label class="col-sm-6 col-md-6" for="infoVertices">Vertices:</label>
-                    <input class="col-sm-6 col-md-6" id="infoVertices" disabled value=3>
+                    <input class="col-sm-6 col-md-6" id="infoVertices" disabled value="">
                 </div>
                 <div>
                     <label class="col-sm-6 col-md-6" for="normalizedPosition">normalized coordinates</label>
@@ -61,6 +68,14 @@
                     <label class="col-sm-6 col-md-6" for="isMouseDown">mouse status</label>
                     <input class="col-sm-6 col-md-6" id="isMouseDown" disabled value=''>
                 </div>
+            </fieldset>
+            <fieldset>
+                <legend>Controls</legend>
+                <div>
+                    <label class="col-sm-6 col-md-6" for="ctrlLineWidth">line width</label>
+                    <input class="col-sm-6 col-md-6" id="ctrlLineWidth" value=1 type="range" min=1 max=20 step=1>
+                </div>
+                <button id="ctrlClearCanvas" type="button">Clear canvas</button>
             </fieldset>
         </form>
     </aside>
