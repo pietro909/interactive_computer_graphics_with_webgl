@@ -3,6 +3,7 @@
 <head lang="en">
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
     <title>Painting with the Mouse</title>
 
     <script id="vertex-shader" type="x-shader/x-vertex">
@@ -24,7 +25,12 @@
 
         void main()
         {
-            gl_FragColor = fColor;
+            //gl_FragColor = fColor;
+            if (false) {
+                gl_FragColor = fColor;
+            } else {
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            }
         }
     </script>
 
@@ -73,7 +79,19 @@
                 <legend>Controls</legend>
                 <div>
                     <label class="col-sm-6 col-md-6" for="ctrlLineWidth">line width</label>
-                    <input class="col-sm-6 col-md-6" id="ctrlLineWidth" value=1 type="range" min=1 max=20 step=1>
+                    <input class="col-sm-6 col-md-6" id="ctrlLineWidth" value=1 type="range" min=1 max=10 step=0.5>
+                </div>
+                <div>
+                    <input class="col-sm-6 col-md-6" id="drawType0" name="drawType" value="lines" type="radio" checked>
+                    <label class="col-sm-6 col-md-6" for="drawType0">Lines</label>
+                    <input class="col-sm-6 col-md-6" id="drawType1" name="drawType" value="line" type="radio" >
+                    <label class="col-sm-6 col-md-6" for="drawType1">Line</label>
+                    <input class="col-sm-6 col-md-6" id="drawType2" name="drawType" value="triangle_fan" type="radio" >
+                    <label class="col-sm-6 col-md-6" for="drawType2">Triangle fan</label>
+                    <input class="col-sm-6 col-md-6" id="drawType3" name="drawType" value="triangle_loop" type="radio" >
+                    <label class="col-sm-6 col-md-6" for="drawType3">Triangle loop</label>
+                    <input class="col-sm-6 col-md-6" id="drawType4" name="drawType" value="points" type="radio" >
+                    <label class="col-sm-6 col-md-6" for="drawType4">Line</label>
                 </div>
                 <button id="ctrlClearCanvas" type="button">Clear canvas</button>
             </fieldset>
