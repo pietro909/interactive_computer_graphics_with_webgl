@@ -1,55 +1,11 @@
 var
-  gl, CURRENT_SHAPE = 'line', LAST_VERTEX = vec2(0, 0), PRESSED = false, CURRENT_WIDTH = 1,
+  gl, CURRENT_SHAPE = 'line_strip', LAST_VERTEX = vec2(0, 0), PRESSED = false, CURRENT_WIDTH = 1,
   CURRENT_INDEX = 0,
   TOLERANCE = 0.005,
   MAX_POINTS = 1024,
   SIZE_OF_FLOAT = 4,
   currentVertexArray = [],
   vertices = [];
-
-var VertexObject = function (points, width, color) {
-  this.points = [];
-  for (var p = 0; p < points.length; p += 1) {
-    this.points.push(points[p]);
-  }
-  this.width = width;
-  this.color = vec4(1.0, 0.0, 0.0, 1.0);
-};
-
-function printVec2(vec) {
-  return vec[0] + ',' + vec[1];
-}
-
-function printCoords(x, y) {
-  return x + ',' + y;
-}
-
-/**
- * Flatten arrays and count elements
- * @param array {Array} of VertexObject
- * @returns {number} the number of items
- */
-function countElements(array) {
-  var total = 0;
-  for (var i = 0; i < array.length; i += 1) {
-    total += array[i].points.length;
-  }
-  return total;
-}
-
-/**
- * Automagically convert coordinates from DOM to WebGL context.
- * @param mouseX {number} the mouse X coordinate
- * @param mouseY {number} the mouse Y coordinate
- * @param canvas {HTMLElement} the canvas being used
- * @returns {{x: number, y: number}}
- */
-function convertCoords(mouseX, mouseY, canvas) {
-  return {
-    x: Math.floor(((mouseX / canvas.width * 2) - 1) * 1000) / 1000,
-    y: Math.floor((((canvas.height - mouseY) / canvas.height * 2) - 1) * 1000) / 1000
-  };
-}
 
 function getUIElements() {
   return {
@@ -129,37 +85,36 @@ window.onload = function () {
   });
 
   uiElements.canvas.addEventListener('mousedown', function (event) {
-    var glCoords = convertCoords(event.layerX, event.layerY, uiElements.canvas);
-    uiElements.infoLayerPosition.value = printCoords(event.layerX, event.layerY);
+    var glCoords = P909Utils.convertCoords(event.layerX, event.layerY, uiElements.canvas);
+    uiElements.infoLayerPosition.value = P909Utils.printCoords(event.layerX, event.layerY);
     uiElements.infoIsMouseDown.value = 'DOWN';
     PRESSED = true;
     CURRENT_INDEX += 1;
-    uiElements.infoNormalizedPosition.value = printCoords(glCoords.x, glCoords.y);
+    uiElements.infoNormalizedPosition.value = P909Utils.printCoords(glCoords.x, glCoords.y);
   });
 
   uiElements.canvas.addEventListener('mouseup', function (event) {
-    var glCoords = convertCoords(event.layerX, event.layerY, uiElements.canvas);
-    uiElements.infoNormalizedPosition.value = printCoords(glCoords.x, glCoords.y);
-    uiElements.infoLayerPosition.value = printCoords(event.layerX, event.layerY);
+    var glCoords = P909Utils.convertCoords(event.layerX, event.layerY, uiElements.canvas);
+    uiElements.infoNormalizedPosition.value = P909Utils.printCoords(glCoords.x, glCoords.y);
+    uiElements.infoLayerPosition.value = P909Utils.printCoords(event.layerX, event.layerY);
     uiElements.infoIsMouseDown.value = '';
     currentVertexArray = [];
     PRESSED = false;
   });
 
   uiElements.canvas.addEventListener('mousemove', function (event) {
-    var glCoords = convertCoords(event.layerX, event.layerY, uiElements.canvas);
+    var glCoords = P909Utils.convertCoords(event.layerX, event.layerY, uiElements.canvas);
     var currentPoint = vec2(glCoords.x, glCoords.y);
-    uiElements.infoLayerPosition.value = printCoords(event.layerX, event.layerY);
-    uiElements.infoNormalizedPosition.value = printCoords(glCoords.x, glCoords.y);
+    uiElements.infoLayerPosition.value = P909Utils.printCoords(event.layerX, event.layerY);
+    uiElements.infoNormalizedPosition.value = P909Utils.printCoords(glCoords.x, glCoords.y);
     if (PRESSED) {
       if (Math.abs(LAST_VERTEX[0] - glCoords.x) > TOLERANCE) {
-        var total = countElements(vertices);
+        var total = P909Utils.countElements(vertices);
         if (total === MAX_POINTS) {
           vertices = [];
         }
-        //console.log('current point: ' + printVec2(currentPoint));
         currentVertexArray.push(currentPoint);
-        vertices.push(new VertexObject(
+        vertices.push(new P909Utils.VertexObject(
           currentVertexArray, CURRENT_WIDTH, ''
         ));
         uiElements.infoVertices.value = total + ' out of ' + MAX_POINTS;
@@ -182,47 +137,20 @@ window.onload = function () {
   uiElements.drawType4.addEventListener('change', onDrawChange);
 
   function render() {
-    var currentPoints, color = vec4(Math.random(), Math.random(), 0.0, 1.0), start = 0;
-    console.log(CURRENT_SHAPE);
-
-    //gl.bindBuffer(gl.ARRAY_BUFFER, cBufferId);
-    //gl.bufferSubData(gl.ARRAY_BUFFER, SIZE_OF_FLOAT * 4 * countElements(vertices), flatten(color));
-
-    //gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-    //gl.bufferSubData(gl.ARRAY_BUFFER, SIZE_OF_FLOAT * 2 * countElements(vertices), flatten(vertices));
+    var currentPoints, start = 0;
 
     for (var i = 0; i < vertices.length; i += 1) {
       currentPoints = vertices[i];
-
-      //gl.lineWidth(CURRENT_WIDTH);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
       gl.bufferSubData(gl.ARRAY_BUFFER, start, flatten(currentPoints.points));
 
       gl.lineWidth(currentPoints.width);
-      /*
-       gl.bindBuffer(gl.ARRAY_BUFFER, cBufferId);
-       gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(color));
-       */
+
       if (currentPoints.length == 1) {
         gl.drawArrays(gl.POINTS, start, currentPoints.points.length);
       } else {
-        switch (CURRENT_SHAPE) {
-          case 'lines' :
-            gl.drawArrays(gl.LINES, start, currentPoints.points.length);
-            break;
-          case 'line' :
-            gl.drawArrays(gl.LINE_STRIP, start, currentPoints.points.length);
-            break;
-          case 'triangle_fan':
-            gl.drawArrays(gl.TRIANGLE_FAN, start, currentPoints.points.length);
-            break;
-          case 'triangle_loop':
-            gl.drawArrays(gl.TRIANGLE_LOOP, start, currentPoints.points.length);
-            break;
-          default :
-            gl.drawArrays(gl.POINTS, start, currentPoints.points.length);
-        }
+        P909Utils.drawBuffer(gl, CURRENT_SHAPE, start, currentPoints.points.length);
       }
     }
 
