@@ -51,10 +51,10 @@ window.onload = function () {
   // bind UI
   var subdBtn = document.getElementById('subdivisionLevel');
   subdBtn.addEventListener('input', function (evt) {
-    subdivisionLevel = parseInt(this.value, 10);
+    subdivisionLevel = parseInt(evt.target.value, 10);
     if (subdivisionLevel > (MAX_SUBDIVISION - 3)) {
       console.warn('out of bound: ' + subdivisionLevel);
-      this.value = 0;
+      evt.target.value = 0;
       subdivisionLevel = 0;
     }
     render();
@@ -62,44 +62,44 @@ window.onload = function () {
 
   var angleBtn = document.getElementById('thetaAngle');
   angleBtn.addEventListener('input', function (evt) {
-    angle = parseInt(this.value, 10) * (Math.PI / 180);
+    angle = parseInt(evt.target.value, 10) * (Math.PI / 180);
     render();
   });
 
   var showAsSierpinski = document.getElementById('showAsSierpinski');
   showAsSierpinski.addEventListener('change', function (evt) {
-    IS_FULL_TRIANGLE = !this.checked;
+    IS_FULL_TRIANGLE = !evt.target.checked;
     render();
   });
 
   var renderType = document.getElementById('renderType');
   renderType.addEventListener('change', function (evt) {
-    STYLE = this.value;
+    STYLE = evt.target.value;
     render();
   });
 
   var geometryControls = document.getElementById('sides');
   geometryControls.addEventListener('input', function (evt) {
-    var sides = parseInt(this.value, 10);
+    var sides = parseInt(evt.target.value, 10);
     if (sides > 2 && sides < 11) {
       SIDES = sides;
       makePolygon(RADIUS, SIDES);
       render();
     } else {
-      this.value = 3;
+      evt.target.value = 3;
     }
   });
 
   var sizeControls = document.getElementById('radius');
   sizeControls.addEventListener('input', function (evt) {
-    var radius = parseFloat(this.value, 10);
-    console.log('radius '+radius);
+    var radius = parseFloat(evt.target.value, 10);
+    //console.log('radius '+radius);
     if (radius > 0 && radius <= 1) {
       RADIUS = radius;
       makePolygon(RADIUS, SIDES);
       render();
     } else {
-      this.value = 1;
+      evt.target.value = 1;
     }
   });
 
