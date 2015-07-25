@@ -138,7 +138,7 @@ window.onload = function () {
       if (currentPoints.length == 1) {
         gl.drawArrays(gl.POINTS, start, currentPoints.points.length);
       } else {
-        console.log('drawing '+currentPoints.shape);
+        //console.log('drawing '+currentPoints.shape);
         P909Utils.drawBuffer(gl, currentPoints.shape, start, currentPoints.points.length);
       }
     }
