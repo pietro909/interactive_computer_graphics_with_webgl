@@ -41,38 +41,42 @@ var P909Utils = (function () {
       }
       return vertices;
     },
-    VertexObject: function (points, width, color) {
+    VertexObject: function (points, width, color, shape) {
       this.points = [];
       for (var p = 0; p < points.length; p += 1) {
         this.points.push(points[p]);
       }
       this.width = (width !== undefined) ? width : 1;
       this.color = (color !== undefined) ? color : vec4(1.0, 0.0, 0.0, 1.0);
+      this.shape = (shape !== undefined) ? shape : 'points'
     },
 
     drawBuffer: function (gl, currentShape, start, end) {
       //console.log('drawBuffer: ', gl, currentShape, start, end);
       switch (CURRENT_SHAPE) {
-        case 'lines' :
+        case 'POINTS' :
+          gl.drawArrays(gl.POINTS, start, end);
+          break;
+        case 'LINES' :
           gl.drawArrays(gl.LINES, start, end);
           break;
-        case 'line_strip' :
+        case 'LINE_STRIP' :
           gl.drawArrays(gl.LINE_STRIP, start, end);
           break;
-        case 'line_loop' :
+        case 'LINE_LOOP' :
           gl.drawArrays(gl.LINE_LOOP, start, end);
           break;
-        case 'triangles':
+        case 'TRIANGLES':
           gl.drawArrays(gl.TRIANGLES, start, end);
           break;
-        case 'triangle_fan':
+        case 'TRIANGLE_FAN':
           gl.drawArrays(gl.TRIANGLE_FAN, start, end);
           break;
-        case 'triangle_loop':
+        case 'TRIANGLE_LOOP':
           gl.drawArrays(gl.TRIANGLE_LOOP, start, end);
           break;
         default :
-          console.error('default!!!');
+          console.error('default!');
           gl.drawArrays(gl.POINTS, start, end);
       }
     },
