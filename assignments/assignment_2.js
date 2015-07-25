@@ -1,8 +1,8 @@
 var
-  gl, CURRENT_SHAPE = 'line_strip', LAST_VERTEX = vec2(0, 0), PRESSED = false, CURRENT_WIDTH = 1,
+  gl, CURRENT_SHAPE = 'LINE_STRIP', LAST_VERTEX = vec2(0, 0), PRESSED = false, CURRENT_WIDTH = 1,
   CURRENT_INDEX = 0,
   TOLERANCE = 0.005,
-  MAX_POINTS = 1024,
+  MAX_POINTS = 4096,
   SIZE_OF_FLOAT = 4,
   currentVertexArray = [],
   vertices = [];
@@ -48,13 +48,6 @@ window.onload = function () {
   gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
   gl.bufferData(gl.ARRAY_BUFFER, SIZE_OF_FLOAT * 2 * MAX_POINTS, gl.STATIC_DRAW);
 
-  /**
-   * the buffer for the Color: it is represented as Vec4 and will then take 4 byte * 4 = 16 byte
-   */
-  var cBufferId = gl.createBuffer();
-  //gl.bindBuffer(gl.ARRAY_BUFFER, cBufferId);
-  //gl.bufferData(gl.ARRAY_BUFFER, SIZE_OF_FLOAT * 4 * MAX_POINTS, gl.STATIC_DRAW);
-
   // configure webgl
   gl.viewport(0, 0, uiElements.canvas.width, uiElements.canvas.height);
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -69,11 +62,7 @@ window.onload = function () {
   var vPos = gl.getAttribLocation(program, 'vPosition');
   gl.vertexAttribPointer(vPos, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPos);
-  /*
-   var vColor = gl.getAttribLocation(program, 'vColor');
-   gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
-   gl.enableVertexAttribArray(vColor);
-   */
+
   uiElements.ctrlLineWidth.addEventListener('change', function (event) {
     CURRENT_WIDTH = parseInt(event.target.value, 10);
   });
@@ -110,12 +99,13 @@ window.onload = function () {
     if (PRESSED) {
       if (Math.abs(LAST_VERTEX[0] - glCoords.x) > TOLERANCE) {
         var total = P909Utils.countElements(vertices);
-        if (total === MAX_POINTS) {
+        if (total >= MAX_POINTS) {
           vertices = [];
+          uiElements.infoVertices.value = 'max vertices number!';
         }
         currentVertexArray.push(currentPoint);
         vertices.push(new P909Utils.VertexObject(
-          currentVertexArray, CURRENT_WIDTH, ''
+          currentVertexArray, CURRENT_WIDTH, '', CURRENT_SHAPE
         ));
         uiElements.infoVertices.value = total + ' out of ' + MAX_POINTS;
         LAST_VERTEX = currentPoint;
@@ -133,11 +123,9 @@ window.onload = function () {
   uiElements.drawType0.addEventListener('change', onDrawChange);
   uiElements.drawType1.addEventListener('change', onDrawChange);
   uiElements.drawType2.addEventListener('change', onDrawChange);
-  uiElements.drawType3.addEventListener('change', onDrawChange);
-  uiElements.drawType4.addEventListener('change', onDrawChange);
 
   function render() {
-    var currentPoints, start = 0;
+    var currentPoints, colors, start = 0;
 
     for (var i = 0; i < vertices.length; i += 1) {
       currentPoints = vertices[i];
@@ -150,7 +138,8 @@ window.onload = function () {
       if (currentPoints.length == 1) {
         gl.drawArrays(gl.POINTS, start, currentPoints.points.length);
       } else {
-        P909Utils.drawBuffer(gl, CURRENT_SHAPE, start, currentPoints.points.length);
+        console.log('drawing '+currentPoints.shape);
+        P909Utils.drawBuffer(gl, currentPoints.shape, start, currentPoints.points.length);
       }
     }
 
