@@ -1,5 +1,5 @@
 var
-  gl, CURRENT_SHAPE = 'triangles', LAST_VERTEX = vec2(0, 0), PRESSED = false, CURRENT_WIDTH = 1,
+  gl, CURRENT_SHAPE = 'TRIANGLES', LAST_VERTEX = vec2(0, 0), PRESSED = false, CURRENT_WIDTH = 1,
   CURRENT_COLOR = 0x000000ff,
   CURRENT_INDEX = 0,
   TOLERANCE = 0.005,
@@ -36,20 +36,6 @@ window.onload = function () {
     return;
   }
 
-  /**
-   * the buffer for Vertex: they are represented as Vec2 and will then take 4 byte * 2 = 8 byte
-   */
-  var bufferId = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-  gl.bufferData(gl.ARRAY_BUFFER, SIZE_OF_FLOAT * 2 * MAX_POINTS, gl.STATIC_DRAW);
-
-  /**
-   * the buffer for the Color: it is represented as Vec4 and will then take 4 byte * 4 = 16 byte
-   */
-  var cBufferId = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, cBufferId);
-  gl.bufferData(gl.ARRAY_BUFFER, SIZE_OF_FLOAT * 4 * MAX_POINTS, gl.STATIC_DRAW);
-
   // configure webgl
   gl.viewport(0, 0, uiElements.canvas.width, uiElements.canvas.height);
   gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -60,21 +46,39 @@ window.onload = function () {
 
   gl.useProgram(program);
 
-  // load data into the GPU
-  var vPos = gl.getAttribLocation(program, 'vPosition');
-  gl.vertexAttribPointer(vPos, 2, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(vPos);
-  var vColor = gl.getAttribLocation(program, 'vColor');
-  gl.vertexAttribPointer(vColor, 4, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(vColor);
-
   uiElements.ctrlColor.addEventListener('change', function (event) {
     CURRENT_COLOR = event.target.value;
     render(vertices);
   });
 
+  var bufferId = gl.createBuffer();
+  var vPosition = gl.getAttribLocation( program, "vPosition" );
+  var cbufferId = gl.createBuffer();
+  var vColor = gl.getAttribLocation( program, "vColor" );
+
+
   function render(arrayOfVertex, options) {
     var currentPoints, actualPoints, start = 0, colors = [];
+
+    var vertices =  arrayOfVertex[0].points; //[-1, -1, 0, 1, 1, -1];
+    var colors = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+
+    // Load the data into the GPU
+
+    gl.bindBuffer( gl.ARRAY_BUFFER, bufferId );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW );
+
+    // Associate out shader variables with our data buffer
+
+    gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vPosition );
+
+    gl.bindBuffer( gl.ARRAY_BUFFER, cbufferId );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+
+    gl.vertexAttribPointer( vColor, 3, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vColor );
+
     console.log(CURRENT_SHAPE);
 
     gl.clear(gl.COLOR_BUFFER_BIT);
@@ -83,17 +87,12 @@ window.onload = function () {
       currentPoints = vertices[i];
       colors = [];
 
-      for (var c = 0; c < currentPoints.points.length; c += 1) {
-        colors.push(vec4(Math.random(), Math.random(), Math.random(), 1.0));
+      if (currentPoints.points !== undefined) {
+        for (var c = 0; c < currentPoints.points.length; c += 1) {
+          colors.push(vec4(Math.random(), Math.random(), Math.random(), 1.0));
+        }
+        gl.lineWidth(currentPoints.width);
       }
-
-      gl.lineWidth(currentPoints.width);
-
-      gl.bindBuffer( gl.ARRAY_BUFFER, bufferId );
-      gl.bufferSubData( gl.ARRAY_BUFFER, 0, flatten(currentPoints.points));
-
-      gl.bindBuffer( gl.ARRAY_BUFFER, cBufferId );
-      gl.bufferSubData( gl.ARRAY_BUFFER, 0, flatten(colors));
 
       P909Utils.drawBuffer(gl, CURRENT_SHAPE, start, 3);
     }
