@@ -56,7 +56,6 @@ window.onload = function () {
   var cbufferId = gl.createBuffer();
   var vColor = gl.getAttribLocation( program, "vColor" );
 
-
   function render(arrayOfVertex, options) {
     var currentPoints, actualPoints, start = 0, colors = [];
 
