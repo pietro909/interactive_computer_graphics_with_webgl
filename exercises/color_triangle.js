@@ -61,7 +61,13 @@ window.onload = function () {
     var currentPoints, actualPoints, start = 0, colors = [];
 
     var vertices =  arrayOfVertex[0].points; //[-1, -1, 0, 1, 1, -1];
-    var colors = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+
+    //var colors = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+    for (var p = 0; p < arrayOfVertex[0].points.length; p += 1) {
+      colors = colors.concat([Math.random(), Math.random(), Math.random()]);
+    }
+
+    console.log(colors);
 
     // Load the data into the GPU
 
@@ -85,28 +91,28 @@ window.onload = function () {
 
     for (var i = 0; i < vertices.length; i += 1) {
       currentPoints = vertices[i];
-      colors = [];
+      /*colors = [];
 
       if (currentPoints.points !== undefined) {
         for (var c = 0; c < currentPoints.points.length; c += 1) {
           colors.push(vec4(Math.random(), Math.random(), Math.random(), 1.0));
         }
         gl.lineWidth(currentPoints.width);
-      }
+      }*/
 
       P909Utils.drawBuffer(gl, CURRENT_SHAPE, start, 3);
     }
 
   }
 
-  //vertices = P909Utils.makePolygon(1, 3);
-  vertices = [
+  vertices = [P909Utils.makePolygon(1, 3)];
+  /*vertices = [
     new P909Utils.VertexObject(
       [vec2(-0.5, -0.5), vec2(0.5, -0.5), vec2(0, 0.5)],
       1,
       vec4(1.0, 1.0, 0.0, 1.0)
     )
-  ];
+  ];*/
 
   render(vertices);
 

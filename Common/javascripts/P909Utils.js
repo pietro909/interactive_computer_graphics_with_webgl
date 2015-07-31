@@ -39,7 +39,15 @@ var P909Utils = (function () {
           lastPoint = _lastPoint;
         }
       }
-      return vertices;
+      //return vertices;
+      return(
+        new P909Utils.VertexObject(
+          //[vec2(-0.5, -0.5), vec2(0.5, -0.5), vec2(0, 0.5)],
+          vertices,
+          1,
+          vec4(1.0, 1.0, 0.0, 1.0)
+        )
+      );
     },
     VertexObject: function (points, width, color, shape) {
       this.points = [];
