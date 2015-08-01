@@ -1,0 +1,78 @@
+{
+  "name": "interactive_computer_graphics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "package.json",
+  "scripts": {
+  	"start": "http-server -a localhost -p 8000",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+      "http-server": "^0.8.0"
+  },
+    "devDependencies": {
+	"jshint": "^2.6.x",
+	"grunt": "~0.4.1",
+	"grunt-contrib-jshint": "~0.6.0"
+    },
+    "jshintConfig" :
+    {
+	"passfail"      : true,
+	"maxerr"        : 20,
+	"browser"       : true,
+	"node"          : false,
+	"rhino"         : false,
+	"couch"         : false,
+	"wsh"           : true,
+	"jquery"        : true,
+	"prototypejs"   : false,
+	"mootools"      : false,
+	"dojo"          : false,
+	"predef": {
+	    "angular": false,
+	    "requestAnimationFrame": false,
+	    "Modernizr": false,
+	    "require": false,
+	    "define": false,
+	    "requirejs": false
+	},
+	"-W015": true,
+	"debug"         : true,
+	"devel"         : true,
+	"strict"        : true,
+	"globalstrict"  : false,
+	"asi"           : false,
+	"laxbreak"      : true,
+	"bitwise"       : true,
+	"boss"          : false,
+	"curly"         : true,
+	"eqeqeq"        : true,
+	"eqnull"        : false,
+	"evil"          : false,
+	"expr"          : false,
+	"forin"         : false,
+	"immed"         : true,
+	"latedef"       : true,
+	"loopfunc"      : true,
+	"noarg"         : true,
+	"regexp"        : true,
+	"regexdash"     : false,
+	"scripturl"     : true,
+	"shadow"        : false,
+	"supernew"      : false,
+	"undef"         : true,
+	"newcap"        : true,
+	"noempty"       : true,
+	"nonew"         : true,
+	"nomen"         : false,
+	"onevar"        : false,
+	"plusplus"      : false,
+	"sub"           : false,
+	"trailing"      : true,
+	"white"         : false
+    }
+
+    
+}
