@@ -24,7 +24,7 @@ var P909Utils = (function () {
 
       if (side > 3) {
         for (s = 0; s < side - 1; s += 1) {
-          vertices.push(center);
+            vertices.push(center);
           tri = 2;
           while (tri--) {
             _lastPoint = this.rotatePoint(lastPoint, rotation, false);
@@ -61,7 +61,7 @@ var P909Utils = (function () {
 
     drawBuffer: function (gl, currentShape, start, end) {
       //console.log('drawBuffer: ', gl, currentShape, start, end);
-      switch (CURRENT_SHAPE) {
+      switch (currentShape) {
         case 'POINTS' :
           gl.drawArrays(gl.POINTS, start, end);
           break;
