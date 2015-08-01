@@ -1,6 +1,7 @@
+
 var
   gl,
-  STYLE = '',
+  STYLE = 'TRIANGLES',
   SIDES = 3, RADIUS = 1,
   IS_FULL_TRIANGLE = true,
   MAX_SUBDIVISION = 10,
@@ -14,37 +15,8 @@ var
     vertices : 3
   },
 // initial polygon (triangle)
-  vertices = [];
-
-function makePolygon(radius, side) {
-  var
-    s, tri, _lastPoint,
-    lastPoint = vec2(0, radius),
-    rotationDeg = 360 / side,
-    rotation = rotationDeg * (Math.PI / 180),
-    center = vec2(0, 0);
-
-  vertices = [];
-
-  if (side > 3) {
-    for (s = 0; s < side-1; s += 1) {
-      vertices.push(center);
-      tri = 2;
-      while (tri--) {
-        _lastPoint = rotatePoint(lastPoint, rotation, false);
-        vertices.push(_lastPoint);
-        lastPoint = _lastPoint;
-      }
-    }
-    //vertices.push(center);
-  } else {
-    for (s = 0; s < side; s += 1) {
-      _lastPoint = rotatePoint(lastPoint, rotation, false);
-      vertices.push(_lastPoint);
-      lastPoint = _lastPoint;
-    }
-  }
-}
+vertices = [],
+colors = [];
 
 window.onload = function () {
 
@@ -57,25 +29,26 @@ window.onload = function () {
       evt.target.value = 0;
       subdivisionLevel = 0;
     }
-    render();
+      
+    render([vertices]);
   });
 
   var angleBtn = document.getElementById('thetaAngle');
   angleBtn.addEventListener('input', function (evt) {
     angle = parseInt(evt.target.value, 10) * (Math.PI / 180);
-    render();
+    render([vertices]);
   });
 
   var showAsSierpinski = document.getElementById('showAsSierpinski');
   showAsSierpinski.addEventListener('change', function (evt) {
     IS_FULL_TRIANGLE = !evt.target.checked;
-    render();
+    render([vertices]);
   });
 
   var renderType = document.getElementById('renderType');
   renderType.addEventListener('change', function (evt) {
     STYLE = evt.target.value;
-    render();
+    render([vertices]);
   });
 
   var geometryControls = document.getElementById('sides');
@@ -83,8 +56,8 @@ window.onload = function () {
     var sides = parseInt(evt.target.value, 10);
     if (sides > 2 && sides < 11) {
       SIDES = sides;
-      makePolygon(RADIUS, SIDES);
-      render();
+      vertices = P909Utils.makePolygon(RADIUS, SIDES);
+      render([vertices]);
     } else {
       evt.target.value = 3;
     }
@@ -96,8 +69,8 @@ window.onload = function () {
     //console.log('radius '+radius);
     if (radius > 0 && radius <= 1) {
       RADIUS = radius;
-      makePolygon(RADIUS, SIDES);
-      render();
+      vertices = makePolygon(RADIUS, SIDES);
+        render([vertices]);
     } else {
       evt.target.value = 1;
     }
@@ -131,48 +104,66 @@ window.onload = function () {
   var bufferId = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
 
+  var cbufferId = gl.createBuffer();
+  var vColor = gl.getAttribLocation( program, "vColor" );
+
   // associate out shader variables with our data buffer
   var vPosition = gl.getAttribLocation(program, 'vPosition');
   gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPosition);
   gl.bufferData(gl.ARRAY_BUFFER, 8 * Math.pow(3, MAX_SUBDIVISION + 1), gl.STATIC_DRAW);
 
-  makePolygon(RADIUS, SIDES);
+  vertices = P909Utils.makePolygon(RADIUS, SIDES);
 
-  render();
+  render([vertices]);
 
-};
+    function render(_arrayOfVertex, options) {
+        var currentPoints, actualPoints, start = 0, colors = [],
+            arrayOfVertex = (Array.isArray(_arrayOfVertex)) ? _arrayOfVertex : [_arrayOfVertex];
+            var currentArray = arrayOfVertex[0];
+            var myVertices = currentArray.points;
+/*
+        if (Array.isArray(_arrayOfVertex)) {
+            arrayOfVertex = _arrayOfVertex;
+        } else {
+            arrayOfVertex = [_arrayOfVertex];
+        }
+  */      
+        for (var p = 0; p < currentArray.points.length; p += 1) {
+            colors = colors.concat([Math.random(),Math.random(),Math.random()]);
+        }
 
-function render() {
-  var point;
+        gl.bindBuffer( gl.ARRAY_BUFFER, bufferId);
+        gl.bufferData( gl.ARRAY_BUFFER, flatten(myVertices), gl.STATIC_DRAW );
 
-  pointArray = [];
-  divideTriangle(vertices[0], vertices[1], vertices[2], subdivisionLevel);
-  for (var v = 3; v < vertices.length; v += 1) {
-    divideTriangle(vertices[v - 2], vertices[v - 1], vertices[v], subdivisionLevel);
+         gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vPosition );
+
+    gl.bindBuffer( gl.ARRAY_BUFFER, cbufferId );
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(colors), gl.STATIC_DRAW );
+
+    gl.vertexAttribPointer( vColor, 3, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vColor );
+        
+//  pointArray = [];
+  //divideTriangle(myVertices[0], myVertices[1], myVertices[2], subdivisionLevel);
+/*
+  for (var v = 3; v < myVertices.length; v += 1) {
+    divideTriangle(myVertices[v - 2], myVertices[v - 1], myVertices[v], subdivisionLevel);
   }
 
   for (var i = 0; i < pointArray.length; i += 1) {
     point = pointArray[i];
     pointArray[i] = rotatePoint(point, angle, true);
   }
+*/
 
-  gl.bufferSubData(gl.ARRAY_BUFFER, 0, flatten(pointArray));
-  gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-  switch (STYLE) {
-    case 'POINTS':
-      gl.drawArrays(gl.POINTS, 0, pointArray.length);
-      break;
-    case 'WIREFRAME':
-      for (var k = 0; k < pointArray.length; k += 3) {
-        gl.drawArrays(gl.LINE_LOOP, k, 3);
-      }
-      break;
-    default :
-      gl.drawArrays(gl.TRIANGLES, 0, pointArray.length);
-      break;
-  }
+         for (var i = 0; i < myVertices.length; i += 1) {
+             currentPoints = myVertices[i];
+             P909Utils.drawBuffer(gl, STYLE, start, 3);
+         }
 
   infos.rotation.value = Math.floor(angle / (Math.PI / 180));
   infos.subds.value = subdivisionLevel;
@@ -183,43 +174,7 @@ function render() {
 
 }
 
-function rotatePoint(vector, _angle, twist) {
-  var
-    a = vector[0], b = vector[1],
-    TWIST = twist ? true : false,
-    distance = TWIST ? Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2)) :  1,
-    angle = _angle * distance,
-    a1 = a * Math.cos(angle) - b * Math.sin(angle),
-    b1 = a * Math.sin(angle) + b * Math.cos(angle);
+};
 
-  return (vec2(a1, b1));
-}
 
-function divideTriangle(a, b, c, count) {
-  var midAB, midBC, midCA;
-  // if end of subds, do the last triangle
-  if (count < 0) {
-    console.error('cannot recurse < 0');
-    return;
-  }
-  if (count === 0) {
-    if (a !== undefined && b !== undefined && c !== undefined) {
-      pointArray.push(a, b, c);
-    } else {
-      console.error('undefined point ', a, b, c);
-    }
-  } else {
-    count -= 1;
-    // divide triangle
-    midAB = mix(a, b, 0.5);
-    midBC = mix(b, c, 0.5);
-    midCA = mix(c, a, 0.5);
-    // take just the three outer triangles
-    divideTriangle(a, midAB, midCA, count);
-    divideTriangle(c, midCA, midBC, count);
-    divideTriangle(b, midBC, midAB, count);
-    if (IS_FULL_TRIANGLE) {
-      divideTriangle(midAB, midBC, midCA, count);
-    }
-  }
-}
+    
