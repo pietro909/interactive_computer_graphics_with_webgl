@@ -23,7 +23,8 @@ var P909Utils = (function () {
         vertices = [];
 
       if (side > 3) {
-        for (s = 0; s < side - 1; s += 1) {
+          for (s = 0; s < side; s += 1) {
+	      console.log(' . loop '+s);
             vertices.push(center);
           tri = 2;
           while (tri--) {
@@ -31,6 +32,7 @@ var P909Utils = (function () {
             vertices.push(_lastPoint);
             lastPoint = _lastPoint;
           }
+	      console.log('vertices -> '+vertices.length);
         }
       } else {
         for (s = 0; s < side; s += 1) {
