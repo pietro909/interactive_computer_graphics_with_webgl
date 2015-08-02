@@ -1,4 +1,3 @@
-
 var
   gl,
   STYLE = 'TRIANGLES',
@@ -122,13 +121,7 @@ window.onload = function () {
             arrayOfVertex = (Array.isArray(_arrayOfVertex)) ? _arrayOfVertex : [_arrayOfVertex];
             var currentArray = arrayOfVertex[0];
             var myVertices = currentArray.points;
-/*
-        if (Array.isArray(_arrayOfVertex)) {
-            arrayOfVertex = _arrayOfVertex;
-        } else {
-            arrayOfVertex = [_arrayOfVertex];
-        }
-  */      
+ 
         for (var p = 0; p < currentArray.points.length; p += 1) {
             colors = colors.concat([Math.random(),Math.random(),Math.random()]);
         }
@@ -160,17 +153,19 @@ window.onload = function () {
 
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-         for (var i = 0; i < myVertices.length; i += 1) {
-             currentPoints = myVertices[i];
-             P909Utils.drawBuffer(gl, STYLE, start, 3);
+	console.log('myVertices: '+myVertices.length);
+	
+        for (var i = 0; i < myVertices.length; i += 3) {	 
+	    //            currentPoints = myVertices[i];
+	    start = i;
+	    console.log('at '+start+' '+3);
+            P909Utils.drawBuffer(gl, STYLE, start, 3);
          }
 
   infos.rotation.value = Math.floor(angle / (Math.PI / 180));
   infos.subds.value = subdivisionLevel;
   infos.triangles.value = pointArray.length / 3;
   infos.vertices.value = pointArray.length;
-
-  //pointArray = [];
 
 }
 
