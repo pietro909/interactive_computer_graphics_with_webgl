@@ -24,14 +24,20 @@ var P909Utils = (function () {
 
       if (side > 3) {
           for (s = 0; s < side; s += 1) {
-	      console.log(' . loop '+s);
-            vertices.push(center);
-          tri = 2;
-          while (tri--) {
-            _lastPoint = this.rotatePoint(lastPoint, rotation, false);
-            vertices.push(_lastPoint);
-            lastPoint = _lastPoint;
-          }
+              vertices.push(center);
+/*	      
+              tri = 2;
+              while (tri--) {
+		  _lastPoint = this.rotatePoint(lastPoint, rotation, false);
+		  vertices.push(_lastPoint);
+		  lastPoint = _lastPoint;
+              }
+*/
+	      
+	      vertices.push(lastPoint);
+	      _lastPoint = this.rotatePoint(lastPoint, rotation, false);
+	      vertices.push(_lastPoint);
+	      lastPoint = _lastPoint;
 	      console.log('vertices -> '+vertices.length);
         }
       } else {
@@ -60,7 +66,25 @@ var P909Utils = (function () {
       this.color = (color !== undefined) ? color : vec4(1.0, 0.0, 0.0, 1.0);
       this.shape = (shape !== undefined) ? shape : 'points'
     },
-
+      divideTriangle: function(a, b, c, count, _accumulator) {
+          var midAB, midBC, midCA, accumulator = _accumulator || []; 
+	  
+        // if end of subds, do the last triangle
+          if (count === 0) {
+	      // doTriangle(a, b, c);
+	      return(a,b,c);
+        } else {
+            count -= 1;
+            // divide triangle
+            midAB = mix(a, b, 0.5);
+            midBC = mix(b, c, 0.5);
+            midCA = mix(c, a, 0.5);
+            // take just the three outer triangles
+            divideTriangle(a, midAB, midCA, count);
+            divideTriangle(c, midCA, midBC, count);
+            divideTriangle(b, midBC, midAB, count);
+        }
+    },
     drawBuffer: function (gl, currentShape, start, end) {
       //console.log('drawBuffer: ', gl, currentShape, start, end);
       switch (currentShape) {
