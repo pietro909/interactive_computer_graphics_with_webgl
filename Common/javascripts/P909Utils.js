@@ -66,13 +66,29 @@ var P909Utils = (function () {
       this.color = (color !== undefined) ? color : vec4(1.0, 0.0, 0.0, 1.0);
       this.shape = (shape !== undefined) ? shape : 'points'
     },
+      tessellatePolygon: function(vertices, subdivisionLevel) {
+	  var  result, tessellatedVertices = [];
+	  console.log('tessellating vertices ' + vertices.length);
+	  for (var v = 0; v < vertices.length; v += 3) {
+	      result = this.divideTriangle(
+		  vertices[v],vertices[v+1],vertices[v+2],subdivisionLevel);
+		  console.log('result: ',result);
+	      tessellatedVertices = tessellatedVertices.concat(result);
+	      
+	  }
+
+	  return tessellatedVertices;
+      }
+      ,
       divideTriangle: function(a, b, c, count, _accumulator) {
-          var midAB, midBC, midCA, accumulator = _accumulator || []; 
-	  
+	  console.log(' _acc is ', _accumulator);
+          var triangles,midAB, midBC, midCA, accumulator = _accumulator || []; 
+	  //console.log('divide '+count);
+	  //console.log('  accumulator is ', accumulator);
         // if end of subds, do the last triangle
           if (count === 0) {
 	      // doTriangle(a, b, c);
-	      return(a,b,c);
+	      return(accumulator.concat([a,b,c]));
         } else {
             count -= 1;
             // divide triangle
@@ -80,9 +96,17 @@ var P909Utils = (function () {
             midBC = mix(b, c, 0.5);
             midCA = mix(c, a, 0.5);
             // take just the three outer triangles
-            divideTriangle(a, midAB, midCA, count);
-            divideTriangle(c, midCA, midBC, count);
-            divideTriangle(b, midBC, midAB, count);
+	    var currentTriangle;
+	    triangles = [
+		[a,midAB,midCA],
+		[c, midCA, midBC, count],
+		[b, midBC, midAB, count]
+	    ];
+	    while (triangles.length > 0) {
+		currentTriangle = triangles.pop();
+		accumulator = this.divideTriangle(currentTriangle[0],currentTriangle[1],currentTriangle[2], count, accumulator);
+	    }
+	    return accumulator;
         }
     },
     drawBuffer: function (gl, currentShape, start, end) {
