@@ -21,14 +21,18 @@ window.onload = function () {
 
   // bind UI
   var subdBtn = document.getElementById('subdivisionLevel');
-  subdBtn.addEventListener('input', function (evt) {
+    subdBtn.addEventListener('input', function (evt) {
+	var tessellatedVertices;
     subdivisionLevel = parseInt(evt.target.value, 10);
     if (subdivisionLevel > (MAX_SUBDIVISION - 3)) {
       console.warn('out of bound: ' + subdivisionLevel);
       evt.target.value = 0;
-      subdivisionLevel = 0;
+	subdivisionLevel = 0;
+	
     }
-      
+	console.log(' current vertices: ' + vertices.points.length);
+	tessellatedVertices = P909Utils.tessellatePolygon(vertices.points, subdivisionLevel);
+	vertices.points = tessellatedVertices;
     render([vertices]);
   });
 
@@ -68,7 +72,7 @@ window.onload = function () {
     //console.log('radius '+radius);
     if (radius > 0 && radius <= 1) {
       RADIUS = radius;
-      vertices = makePolygon(RADIUS, SIDES);
+	vertices = P909Utils.makePolygon(RADIUS, SIDES);
         render([vertices]);
     } else {
       evt.target.value = 1;
@@ -126,10 +130,11 @@ window.onload = function () {
             colors = colors.concat([Math.random(),Math.random(),Math.random()]);
         }
 
-        gl.bindBuffer( gl.ARRAY_BUFFER, bufferId);
-        gl.bufferData( gl.ARRAY_BUFFER, flatten(myVertices), gl.STATIC_DRAW );
+    /* === update buffers with new data for color and geometry === */
+    gl.bindBuffer( gl.ARRAY_BUFFER, bufferId);
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(myVertices), gl.STATIC_DRAW );
 
-         gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
+    gl.vertexAttribPointer( vPosition, 2, gl.FLOAT, false, 0, 0 );
     gl.enableVertexAttribArray( vPosition );
 
     gl.bindBuffer( gl.ARRAY_BUFFER, cbufferId );
@@ -139,7 +144,7 @@ window.onload = function () {
     gl.enableVertexAttribArray( vColor );
         
 //  pointArray = [];
-  //divideTriangle(myVertices[0], myVertices[1], myVertices[2], subdivisionLevel);
+	//divideTriangle(myVertices[0], myVertices[1], myVertices[2], subdivisionLevel);
 /*
   for (var v = 3; v < myVertices.length; v += 1) {
     divideTriangle(myVertices[v - 2], myVertices[v - 1], myVertices[v], subdivisionLevel);
@@ -154,11 +159,16 @@ window.onload = function () {
         gl.clear(gl.COLOR_BUFFER_BIT);
 
 	console.log('myVertices: '+myVertices.length);
-	
+	var p;
         for (var i = 0; i < myVertices.length; i += 3) {	 
 	    //            currentPoints = myVertices[i];
 	    start = i;
-	    console.log('at '+start+' '+3);
+	    console.log('index is '+i+' < '+myVertices.length);
+	    console.log('will draw: ');
+	    console.log('   at '+myVertices[i][0]+' '+myVertices[i][1]);
+	    console.log('   at '+myVertices[i+1][0]+' '+myVertices[i+1][1]);
+	    console.log('   at '+myVertices[i+2][0]+' '+myVertices[i+2][1]);
+	    
             P909Utils.drawBuffer(gl, STYLE, start, 3);
          }
 
