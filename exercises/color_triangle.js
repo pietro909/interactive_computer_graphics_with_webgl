@@ -90,16 +90,8 @@ window.onload = function () {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     for (var i = 0; i < vertices.length; i += 1) {
-      currentPoints = vertices[i];
-      /*colors = [];
-
-      if (currentPoints.points !== undefined) {
-        for (var c = 0; c < currentPoints.points.length; c += 1) {
-          colors.push(vec4(Math.random(), Math.random(), Math.random(), 1.0));
-        }
-        gl.lineWidth(currentPoints.width);
-      }*/
-
+	currentPoints = vertices[i];
+	console.log('DRAW: step '+i);
       P909Utils.drawBuffer(gl, CURRENT_SHAPE, start, 3);
     }
 
