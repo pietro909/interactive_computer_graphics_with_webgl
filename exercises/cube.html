@@ -5,32 +5,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="../Common/stylesheets/style.css">
     <title>Cube</title>
-
-    <script id="vertex-shader" type="x-shader/x-vertex">
-        attribute vec4 vPosition;
-        attribute vec4 vColor;
-        varying vec4 fColor;
-
-        void
-        main()
-        {
-            gl_Position = vPosition;
-            fColor = vColor;
-        }
-    </script>
-
-    <script id="fragment-shader" type="x-shader/x-fragment">
-        precision mediump float;
-
-        varying vec4 fColor;
-        void
-        main()
-        {
-            gl_FragColor = fColor;
-        }
-    </script>
     <script type="text/javascript" src="../Common/webgl-utils.js"></script>
-    <script type="text/javascript" src="../Common/initShaders.js"></script>
+    <script type="text/javascript" src="../Common/initShaders2.js"></script>
     <script type="text/javascript" src="../Common/MV.js"></script>
     <script type="text/javascript" src="../Common/javascripts/P909Utils.js"></script>
     <script type="text/javascript" src="cube.js"></script>
@@ -44,8 +20,8 @@
     </ul>
 </header>
 <article class="col-16">
-    <section class="col-md-8 media" id="theContainer">
-        <canvas id="gl-canvas" width="512" height="512">
+    <section class="col-md-8 media" id="theContainer" onload="loadGL()">
+        <canvas id="glCanvas" width="512" height="512">
             Oops... your browser doesn't support the HTML5 canvas element
         </canvas>
     </section>
