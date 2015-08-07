@@ -1,6 +1,6 @@
 console.log('geometries');
 
-document.onload = function() {
+function loadGL() {
   var program, vBuffer, cBuffer, vColor, vPosition,
       geometries = [],
       RADIUS = 1, SIDES = 4,
